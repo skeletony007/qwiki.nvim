@@ -1,8 +1,8 @@
-local Auth = require("qwiki.providers.wikimedia.auth")
+local Auth = require("qwiki.providers.wikipedia.auth")
 local requests = require("qwiki.requests")
 local util = require("qwiki.util")
 
----@class qwiki.WikimediaProvider : qwiki.Provider
+---@class qwiki.WikipediaProvider : qwiki.Provider
 ---@field auth? qwiki.WikimediaAuth
 local Provider = {}
 Provider.__index = Provider

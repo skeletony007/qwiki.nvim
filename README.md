@@ -35,23 +35,23 @@ New instances should added like `qwiki.<provider-name>:new(<instance-name>)`.
 For example:
 
 ```lua
-qwiki.wikimedia:new("My Wikimedia")
+qwiki.wikikedia:new("My Wikipedia")
 ```
 
 There can be many instances of each provider, each having a unique name.
 
-#### Wikimedia API
+#### Wikipedia API (Wikimedia)
 
 Simple set up:
 
 ```lua
-qwiki.wikimedia:new("My Wikimedia")
+qwiki.wikipedia:new("My Wikipedia")
 ```
 
 Or with [API Portal Authentication]:
 
 ```lua
-qwiki.wikimedia:new("My Wikimedia", {
+qwiki.wikipedia:new("My Wikipedia", {
     client_id_command = "pass wikimedia.org/MyAccount | awk -F': *' '/^API key Client ID:/ {print $2}'",
     client_secret_command = "pass wikimedia.org/MyAccount | awk -F': *' '/^API key Client secret:/ {print $2}'",
 })
