@@ -6,7 +6,8 @@ Pronounced "quickie". Quickly search wiki pages.
 - [qwiki.nvim](#qwikinvim)
 - [Instalation](#instalation)
 - [Providers](#providers)
-  - [Wikimedia API](#wikimedia-api)
+  - [Wikipedia API (Wikimedia)](#wikipedia-api-wikimedia)
+  - [ArchWiki](#archwiki)
 - [Telesope Extension](#telesope-extension)
 - [HTTP Requests using curl](#http-requests-using-curl)
 <!--toc:end-->
@@ -58,6 +59,12 @@ qwiki.wikipedia:new("My Wikipedia", {
 ```
 
 [API Portal Authentication]: https://api.wikimedia.org/wiki/Authentication#App_authentication
+
+#### ArchWiki
+
+```lua
+qwiki.archwiki:new("My ArchWiki")
+```
 
 ### Telesope Extension
 
