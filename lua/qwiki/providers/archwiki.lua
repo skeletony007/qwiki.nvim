@@ -56,10 +56,15 @@ function Provider:search_titles(query)
         vim.json.decode
     )
 
+    assert(type(response[2]) == "table", "malformed response missing titles")
+    assert(type(response[3]) == "table", "malformed response missing descriptions")
     local results = {}
     local titles = response[2]
     local descriptions = response[3]
     for i, title in ipairs(titles) do
+        assert(type(title) == "string", "malformed response title is not a string")
+        assert(descriptions[i], "malformed response missing corresponding description")
+        assert(type(descriptions[i]) == "string", "malformed response description is not a string")
         table.insert(results, {
             display = title,
             ordinal = title,
@@ -74,9 +79,13 @@ function Provider:get_page(title)
         "https://wiki.archlinux.org/api.php",
         "GET",
         {
-            action = "parse",
-            page = title,
+            action = "query",
+            prop = "revisions",
+            titles = title,
+            rvslots = "main",
+            rvprop = "content",
             format = "json",
+            formatversion = "2",
         },
         nil,
         {
@@ -84,9 +93,19 @@ function Provider:get_page(title)
         },
         vim.json.decode
     )
+    local page = response.query and response.query.pages and response.query.pages[1]
+    local content = page
+        and page.revisions
+        and page.revisions[1]
+        and page.revisions[1].slots
+        and page.revisions[1].slots.main
+        and page.revisions[1].slots.main.content
+
+    assert(content, "malformed response")
+    assert(type(content) == "string", "malformed response content is not a string")
     return {
-        data = response.parse.text["*"],
-        filetype = "html",
+        data = content,
+        filetype = "mediawiki",
     }
 end
 
