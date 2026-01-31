@@ -6,7 +6,7 @@ Pronounced "quickie". Quickly search wiki pages.
 - [qwiki.nvim](#qwikinvim)
 - [Instalation](#instalation)
 - [Providers](#providers)
-  - [Wikipedia API (Wikimedia)](#wikipedia-api-wikimedia)
+  - [Wikimedia REST API (Wikipedia)](#wikimedia-rest-api-wikipedia)
   - [ArchWiki](#archwiki)
 - [Telesope Extension](#telesope-extension)
 - [HTTP Requests using curl](#http-requests-using-curl)
@@ -41,24 +41,30 @@ qwiki.wikikedia:new("My Wikipedia")
 
 There can be many instances of each provider, each having a unique name.
 
-#### Wikipedia API (Wikimedia)
+#### Wikimedia REST API (Wikipedia)
+
+[Documentation and examples]
 
 Simple set up:
 
 ```lua
-qwiki.wikipedia:new("My Wikipedia")
+qwiki.wikimedia:new("Wikipedia", {
+    endpoint = "https://en.wikipedia.org/w/rest.php",
+})
 ```
 
 Or with [API Portal Authentication]:
 
 ```lua
-qwiki.wikipedia:new("My Wikipedia", {
+qwiki.wikimedia:new("My Wikipedia", {
+    endpoint = "https://en.wikipedia.org/w/rest.php",
     client_id_command = "pass wikimedia.org/MyAccount | awk -F': *' '/^API key Client ID:/ {print $2}'",
     client_secret_command = "pass wikimedia.org/MyAccount | awk -F': *' '/^API key Client secret:/ {print $2}'",
 })
 ```
 
 [API Portal Authentication]: https://api.wikimedia.org/wiki/Authentication#App_authentication
+[Documentation and examples]: https://www.mediawiki.org/wiki/API:Action_API
 
 #### ArchWiki
 

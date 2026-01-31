@@ -1,19 +1,23 @@
-local Auth = require("qwiki.providers.wikipedia.auth")
+local Auth = require("qwiki.providers.wikimedia.auth")
 local requests = require("qwiki.requests")
 local util = require("qwiki.util")
 
----@class qwiki.WikipediaProvider : qwiki.Provider
+---@class qwiki.WikimediaProvider : qwiki.Provider
 ---@field auth? qwiki.WikimediaAuth
+---@field endpoint string REST API endpoint
 local Provider = {}
 Provider.__index = Provider
 
 function Provider:new(name, opts)
     opts = opts or {}
+    if not opts.endpoint then
+        error("must provide project REST API endpoint. Example https://en.wikipedia.org/w/rest.php")
+    end
     local auth
     if opts.client_id_command or opts.client_secret_command then
         auth = Auth:new(opts.client_id_command, opts.client_secret_command)
     end
-    local instance = setmetatable({ name = name, auth = auth }, self)
+    local instance = setmetatable({ name = name, endpoint = opts.endpoint, auth = auth }, self)
     util.register_provider(instance)
     return instance
 end
@@ -54,7 +58,7 @@ end
 
 function Provider:search_titles(query)
     local response = self:_wikimedia_request(
-        "https://api.wikimedia.org/core/v1/wikipedia/en/search/title",
+        string.format("%s/v1/search/title", self.endpoint),
         "GET",
         {
             ["accept"] = "application/json",
@@ -86,7 +90,7 @@ end
 
 function Provider:get_page(title)
     local response = self:_wikimedia_request(
-        string.format("https://api.wikimedia.org/core/v1/wikipedia/en/page/%s", vim.uri_encode(title)),
+        string.format("%s/v1/page/%s", self.endpoint, vim.uri_encode(title)),
         "GET",
         {
             ["accept"] = "application/json",
