@@ -29,6 +29,10 @@ M.get_provider_by_name = function(name)
     return provider
 end
 
+---@param ref qwiki.PageRef
+---@return string
+local function make_buf_name(ref) return string.format("qwiki://%s/%s", ref.provider.name, ref.result.display) end
+
 --- Open wiki page buffers in windows. Firstly in the current window, then new
 --- splits (in a nested spiral pattern of repeating "left", "above", "right",
 --- and "below")
@@ -39,6 +43,7 @@ M.open_wiki_page = function(refs)
     local split_direction = { "below", "left", "above", "right" }
     for i, ref in ipairs(refs) do
         local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, make_buf_name(ref) .. "scheduling request")
         vim.api.nvim_buf_call(buf, function() vim.cmd("syntax match Comment /.*/") end)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
             string.format("Title: %s", ref.result.display),
@@ -46,6 +51,7 @@ M.open_wiki_page = function(refs)
             "[INFO] scheduling request...",
         })
         vim.schedule(function()
+            vim.api.nvim_buf_set_name(buf, make_buf_name(ref) .. "executing request")
             vim.api.nvim_buf_set_lines(buf, -2, -1, false, { "[INFO] executing request..." })
             local ok, page = pcall(ref.provider.get_page, ref.provider, ref.result.ordinal)
             if not ok then
@@ -72,6 +78,7 @@ M.open_wiki_page = function(refs)
                 return
             end
             vim.api.nvim_buf_call(buf, function() vim.cmd("syntax clear Comment") end)
+            vim.api.nvim_buf_set_name(buf, make_buf_name(ref))
 
             vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(page.data, "\n"))
             vim.api.nvim_set_option_value("filetype", page.filetype or "html", { buf = buf })
