@@ -41,13 +41,13 @@ M.open_wiki_page = function(refs)
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_call(buf, function() vim.cmd("syntax match Comment /.*/") end)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-            string.format("Title: %s", ref.title),
+            string.format("Title: %s", ref.result.display),
             string.format("Provider: %s", ref.provider.name),
             "[INFO] scheduling request...",
         })
         vim.schedule(function()
             vim.api.nvim_buf_set_lines(buf, -2, -1, false, { "[INFO] executing request..." })
-            local ok, page = pcall(ref.provider.get_page, ref.provider, ref.title)
+            local ok, page = pcall(ref.provider.get_page, ref.provider, ref.result.ordinal)
             if not ok then
                 vim.api.nvim_buf_call(buf, function() vim.cmd("syntax match ErrorMsg /.*/") end)
                 vim.api.nvim_buf_set_lines(

@@ -61,7 +61,8 @@ function Provider:search_titles(query)
     local descriptions = response[3]
     for i, title in ipairs(titles) do
         table.insert(results, {
-            title = title,
+            display = title,
+            ordinal = title,
             preview = descriptions[i],
         })
     end

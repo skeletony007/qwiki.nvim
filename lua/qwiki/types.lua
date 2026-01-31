@@ -17,11 +17,12 @@
 ---@field filetype? string
 
 ---@class qwiki.SearchResult
----@field title string
+---@field display string reading-friendly format
+---@field ordinal string passed as provider:get_page(ordinal)
 ---@field preview? qwiki.Preview
 
 ---@class qwiki.PageRef
----@field title string
+---@field result qwiki.SearchResult
 ---@field provider qwiki.Provider
 
 ---@class qwiki.Page

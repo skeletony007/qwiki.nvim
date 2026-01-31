@@ -10,22 +10,47 @@ local action_state = require("telescope.actions.state")
 ---@param query string
 ---@param providers qwiki.Provider[]
 local telescope_search_providers = function(query, providers)
+    ---@type string[] item display names
     local results = {}
-    local title_providers = {}
+
+    ---@type table<string, qwiki.PageRef[]> key is item display name
+    local item_page_refs = {}
+
+    ---@param item string item display name
     local entry_maker = function(item)
         local provider_names =
-            table.concat(vim.tbl_map(function(provider) return provider.name end, title_providers[item]), ", ")
+            table.concat(vim.tbl_map(function(ref) return ref.provider.name end, item_page_refs[item]), ", ")
         return {
             value = item,
             display = function()
-                return string.format("%s (%s)", item, provider_names),
+                local text = string.format("%s (%s)", item, provider_names)
+                return text,
                     {
                         { { 0, #item }, "Normal" },
-                        { { #item + 1, #item + #provider_names + 3 }, "Comment" },
+                        { { #item + 1, #text }, "Comment" },
                     }
             end,
             ordinal = item,
         }
+    end
+
+    ---@param entry table
+    ---@return qwiki.PageRef
+    local entry_to_page_ref = function(entry)
+        ---@type string item display name
+        local item = entry.value
+        if #item_page_refs[item] == 1 then
+            return item_page_refs[item][1]
+        elseif #item_page_refs[item] > 1 then
+            local textlist = { "Select a provider (there are multiple for this page):" }
+            for i, ref in ipairs(item_page_refs[item]) do
+                table.insert(textlist, i + 1, string.format("%d. %s", i, ref.provider.name))
+            end
+            return item_page_refs[vim.fn.inputlist(textlist)]
+        else
+            -- this should never happen
+            error("something went wrong: missing a provider for this title")
+        end
     end
 
     local picker = pickers
@@ -47,21 +72,7 @@ local telescope_search_providers = function(query, providers)
 
                     actions.close(prompt_bufnr)
 
-                    util.open_wiki_page(vim.tbl_map(function(entry)
-                        local title = entry.value
-                        if #title_providers[title] == 1 then
-                            return { title = title, provider = title_providers[title][1] }
-                        elseif #title_providers[title] > 1 then
-                            local textlist = { "Select a provider (there are multiple for this page):" }
-                            for i, p in ipairs(providers) do
-                                table.insert(textlist, i + 1, string.format("%d. %s", i, p.name))
-                            end
-                            return { title = title, provider = providers[vim.fn.inputlist(textlist)] }
-                        else
-                            -- this should never happen
-                            error("something went wrong: missing a provider for this title")
-                        end
-                    end, entries))
+                    util.open_wiki_page(vim.tbl_map(entry_to_page_ref, entries))
                 end)
                 return true
             end,
@@ -70,17 +81,17 @@ local telescope_search_providers = function(query, providers)
 
     for _, provider in ipairs(providers) do
         vim.schedule(function()
-            vim.list_extend(
-                results,
-                vim.tbl_map(function(result)
-                    local title = result.title
-                    if not title_providers[title] then
-                        title_providers[title] = {}
-                    end
-                    table.insert(title_providers[title], provider)
-                    return title
-                end, provider:search_titles(query))
-            )
+            local provider_results = provider:search_titles(query)
+
+            for _, result in ipairs(provider_results) do
+                local item = result.display
+                table.insert(results, item)
+
+                if not item_page_refs[item] then
+                    item_page_refs[item] = {}
+                end
+                table.insert(item_page_refs[item], { result = result, provider = provider })
+            end
         end)
     end
 

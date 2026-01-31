@@ -20,17 +20,19 @@ end
 
 ---@param url string
 ---@param method string
+---@param headers? table
 ---@param params? table
 ---@param body? string
 ---@param code_reasons table contains one key http code with reason "success"
 ---@param decoder? fun(response: string):any
 ---@return any response
-function Provider:_wikimedia_request(url, method, params, body, code_reasons, decoder)
-    local fields = { ["User-Agent"] = "skeletony007/qwiki.nvim (git@github.com/skeletony007/qwiki.nvim.git)" }
+function Provider:_wikimedia_request(url, method, headers, params, body, code_reasons, decoder)
+    headers = headers or {}
+    headers["User-Agent"] = "skeletony007/qwiki.nvim (git@github.com/skeletony007/qwiki.nvim.git)"
     if self.auth then
-        fields["Authorization"] = "Bearer " .. self.auth:get_token()
+        headers["Authorization"] = "Bearer " .. self.auth:get_token()
     end
-    local response = requests.request(url, method, fields, params, body):wait()
+    local response = requests.request(url, method, headers, params, body):wait()
 
     local reason = code_reasons[tostring(response.http_code)]
     if not reason then
@@ -54,6 +56,9 @@ function Provider:search_titles(query)
     local response = self:_wikimedia_request(
         "https://api.wikimedia.org/core/v1/wikipedia/en/search/title",
         "GET",
+        {
+            ["accept"] = "application/json",
+        },
         { q = query, limit = 20 },
         nil,
         {
@@ -70,7 +75,8 @@ function Provider:search_titles(query)
     return vim.tbl_map(
         function(item)
             return {
-                title = item.title,
+                display = item.title,
+                ordinal = item.key,
                 preview = item.description,
             }
         end,
@@ -80,18 +86,29 @@ end
 
 function Provider:get_page(title)
     local response = self:_wikimedia_request(
-        string.format("https://api.wikimedia.org/core/v1/wikipedia/en/page/%s/html", title),
+        string.format("https://api.wikimedia.org/core/v1/wikipedia/en/page/%s", vim.uri_encode(title)),
         "GET",
-        nil,
+        {
+            ["accept"] = "application/json",
+        },
+        {
+            ["redirect"] = false,
+        },
         nil,
         {
             ["200"] = "success",
             ["404"] = "title or revision not found",
-        }
+        },
+        vim.json.decode
     )
+
+    if not response.source then
+        error("response missing key: source")
+    end
+
     return {
-        data = response,
-        filetype = "html",
+        data = response.source,
+        filetype = "mediawiki",
     }
 end
 
