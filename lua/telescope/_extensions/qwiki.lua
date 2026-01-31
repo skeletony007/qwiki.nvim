@@ -46,7 +46,7 @@ local telescope_search_providers = function(query, providers)
             for i, ref in ipairs(item_page_refs[item]) do
                 table.insert(textlist, i + 1, string.format("%d. %s", i, ref.provider.name))
             end
-            return item_page_refs[vim.fn.inputlist(textlist)]
+            return item_page_refs[item][vim.fn.inputlist(textlist)]
         else
             -- this should never happen
             error("something went wrong: missing a provider for this title")
