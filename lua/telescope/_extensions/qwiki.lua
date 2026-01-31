@@ -35,18 +35,27 @@ local telescope_search_providers = function(query, providers)
     end
 
     ---@param entry table
-    ---@return qwiki.PageRef
+    ---@return qwiki.PageRef[]
     local entry_to_page_ref = function(entry)
         ---@type string item display name
         local item = entry.value
         if #item_page_refs[item] == 1 then
-            return item_page_refs[item][1]
+            return { item_page_refs[item][1] }
         elseif #item_page_refs[item] > 1 then
             local textlist = { "Select a provider (there are multiple for this page):" }
             for i, ref in ipairs(item_page_refs[item]) do
                 table.insert(textlist, i + 1, string.format("%d. %s", i, ref.provider.name))
             end
-            return item_page_refs[item][vim.fn.inputlist(textlist)]
+            table.insert(
+                textlist,
+                #item_page_refs[item] + 2,
+                string.format("%d. %s", #item_page_refs[item] + 1, "Open from all providers")
+            )
+            local ref_index = vim.fn.inputlist(textlist)
+            if ref_index == #item_page_refs[item] + 1 then
+                return item_page_refs[item]
+            end
+            return { item_page_refs[item][ref_index] }
         else
             -- this should never happen
             error("something went wrong: missing a provider for this title")
@@ -72,7 +81,7 @@ local telescope_search_providers = function(query, providers)
 
                     actions.close(prompt_bufnr)
 
-                    util.open_wiki_page(vim.tbl_map(entry_to_page_ref, entries))
+                    util.open_wiki_page(vim.iter(vim.tbl_map(entry_to_page_ref, entries)):flatten():totable())
                 end)
                 return true
             end,
