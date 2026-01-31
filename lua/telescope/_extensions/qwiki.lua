@@ -64,7 +64,7 @@ local telescope_search_providers = function(query, providers)
 
     local picker = pickers
         .new({}, {
-            prompt_title = string.format("Search pages (%d providers)", #providers),
+            prompt_title = string.format("Search pages (%d provider%s)", #providers, #providers > 1 and "s" or ""),
             finder = finders.new_dynamic({
                 entry_maker = entry_maker,
                 fn = function() return results end,
