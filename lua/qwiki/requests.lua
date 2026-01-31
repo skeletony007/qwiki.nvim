@@ -69,6 +69,7 @@ end
 M.request = function(url, method, headers, params, body, callback)
     local command = {
         "curl",
+        "--location",
         "--silent",
         "--connect-timeout",
         "1",
