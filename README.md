@@ -2,6 +2,8 @@
 
 Pronounced "quickie". Quickly search wiki pages.
 
+![Demo with telescope.nvim made with Charm VHS](./demo.gif)
+
 <!--toc:start-->
 - [qwiki.nvim](#qwikinvim)
 - [Instalation](#instalation)
