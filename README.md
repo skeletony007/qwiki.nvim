@@ -71,7 +71,7 @@ qwiki.wikimedia:new("My Wikipedia", {
 #### ArchWiki
 
 ```lua
-qwiki.archwiki:new("My ArchWiki")
+qwiki.archwiki:new("ArchWiki")
 ```
 
 ### Telesope Extension
