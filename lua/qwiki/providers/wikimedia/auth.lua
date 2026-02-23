@@ -39,7 +39,7 @@ function Auth:_refresh_token()
         :wait()
 
     local data = vim.json.decode(response.body)
-    assert(data.token_type == "Bearer", [[access token type is "Bearer"]])
+    assert(data.token_type == "Bearer", [[unexpected access token type. Expected "Bearer"]])
     assert(type(data.access_token) == "string")
     assert(type(data.expires_in) == "number")
     if data.expires_in ~= 14400 then
