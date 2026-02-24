@@ -10,6 +10,7 @@ Pronounced "quickie". Quickly search wiki pages.
 - [Providers](#providers)
   - [Wikimedia REST API (Wikipedia)](#wikimedia-rest-api-wikipedia)
   - [ArchWiki](#archwiki)
+- [Filetype callbacks](#filetype-callbacks)
 - [Telesope Extension](#telesope-extension)
 - [HTTP Requests using curl](#http-requests-using-curl)
 <!--toc:end-->
@@ -72,6 +73,59 @@ qwiki.wikimedia:new("My Wikipedia", {
 
 ```lua
 qwiki.archwiki:new("ArchWiki")
+```
+
+### Filetype callbacks
+
+```lua
+local filetypes = require("qwiki.filetypes")
+```
+
+Call `filetypes.setup` to define callbacks. Example:
+
+```lua
+local get_wikilink_under_cursor = function()
+    local line = vim.api.nvim_get_current_line()
+    local col = vim.api.nvim_win_get_cursor(0)[2] + 1
+
+    -- Find nearest [[ to the left of cursor
+    local left = line:sub(1, col):match(".*()%[%[")
+    if not left then
+        return nil
+    end
+
+    -- Find nearest ]] to the right
+    local right_rel = line:sub(col):match("()%]%]")
+    if not right_rel then
+        return nil
+    end
+    local right = col + right_rel - 1
+
+    local inner = line:sub(left + 2, right - 1)
+
+    -- Remove display text and section
+    inner = inner:gsub("|.*$", ""):gsub("#.*$", ""):gsub("^%s+", ""):gsub("%s+$", "")
+
+    return inner ~= "" and inner or nil
+end
+
+filetypes.setup({
+    mediawiki = function(buf, ref)
+        vim.keymap.set("n", "<C-]>", function()
+            local title = get_wikilink_under_cursor()
+            if not title then
+                return
+            end
+            require("qwiki.util").open_wiki_page({
+                { title = title, provider = ref.provider },
+            })
+        end, { buffer = buf, silent = true })
+        vim.keymap.set({ "n", "v" }, "j", "gj", { buffer = buf, silent = true })
+        vim.keymap.set({ "n", "v" }, "k", "gk", { buffer = buf, silent = true })
+        vim.keymap.set({ "n", "v" }, "gj", "j", { buffer = buf, silent = true })
+        vim.keymap.set({ "n", "v" }, "gk", "k", { buffer = buf, silent = true })
+    end,
+})
 ```
 
 ### Telesope Extension
