@@ -7,10 +7,10 @@
 
 ---@class qwiki.RequestResponse
 ---@field body string
----@field http_code integer
+---@field http_code number
 
 ---@class qwiki.RequestHandle
----@field wait fun(self: qwiki.RequestHandle, timeout?: integer): qwiki.RequestResponse
+---@field wait fun(self: qwiki.RequestHandle, timeout?: number): qwiki.RequestResponse
 
 ---@class qwiki.Preview
 ---@field data string

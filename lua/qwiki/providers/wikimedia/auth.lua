@@ -4,7 +4,7 @@ local requests = require("qwiki.requests")
 ---@field client_id_command string
 ---@field client_secret_command string
 ---@field access_token? string
----@field access_token_expiry integer
+---@field access_token_expiry number
 local Auth = {}
 Auth.__index = Auth
 
