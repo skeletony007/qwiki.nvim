@@ -99,7 +99,7 @@ local telescope_search_providers = function(query, providers)
                 if not item_page_refs[item] then
                     item_page_refs[item] = {}
                 end
-                table.insert(item_page_refs[item], { title = result.ordinal, provider = provider })
+                table.insert(item_page_refs[item], { title = result.title, provider = provider })
             end
         end)
     end

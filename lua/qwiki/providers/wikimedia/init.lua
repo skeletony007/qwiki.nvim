@@ -80,7 +80,7 @@ function Provider:search_titles(query)
         function(item)
             return {
                 display = item.title,
-                ordinal = item.key,
+                title = item.key,
                 preview = item.description,
             }
         end,

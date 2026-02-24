@@ -67,7 +67,7 @@ function Provider:search_titles(query)
         assert(type(descriptions[i]) == "string", "malformed response description is not a string")
         table.insert(results, {
             display = title,
-            ordinal = title,
+            title = title,
             preview = descriptions[i],
         })
     end

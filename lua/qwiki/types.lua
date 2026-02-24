@@ -18,7 +18,7 @@
 
 ---@class qwiki.SearchResult
 ---@field display string reading-friendly format
----@field ordinal string passed as provider:get_page(ordinal)
+---@field title string passed to provider:get_page
 ---@field preview? qwiki.Preview
 
 ---@class qwiki.PageRef
