@@ -1,3 +1,5 @@
+local ft_module = require("qwiki.filetypes")
+
 local M = {}
 
 local providers = {}
@@ -31,7 +33,7 @@ end
 
 ---@param ref qwiki.PageRef
 ---@return string
-local function make_buf_name(ref) return string.format("qwiki://%s/%s", ref.provider.name, ref.result.display) end
+local function make_buf_name(ref) return string.format("qwiki://%s/%s", ref.provider.name, ref.title) end
 
 --- Open wiki page buffers in windows. Firstly in the current window, then new
 --- splits (in a nested spiral pattern of repeating "left", "above", "right",
@@ -46,14 +48,14 @@ M.open_wiki_page = function(refs)
         vim.api.nvim_buf_set_name(buf, make_buf_name(ref) .. "scheduling request")
         vim.api.nvim_buf_call(buf, function() vim.cmd("syntax match Comment /.*/") end)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-            string.format("Title: %s", ref.result.display),
+            string.format("Title: %s", ref.title),
             string.format("Provider: %s", ref.provider.name),
             "[INFO] scheduling request...",
         })
         vim.schedule(function()
             vim.api.nvim_buf_set_name(buf, make_buf_name(ref) .. "executing request")
             vim.api.nvim_buf_set_lines(buf, -2, -1, false, { "[INFO] executing request..." })
-            local ok, page = pcall(ref.provider.get_page, ref.provider, ref.result.ordinal)
+            local ok, page = pcall(ref.provider.get_page, ref.provider, ref.title)
             if not ok then
                 vim.api.nvim_buf_call(buf, function() vim.cmd("syntax match ErrorMsg /.*/") end)
                 vim.api.nvim_buf_set_lines(
@@ -79,6 +81,8 @@ M.open_wiki_page = function(refs)
             end
             vim.api.nvim_buf_call(buf, function() vim.cmd("syntax clear Comment") end)
             vim.api.nvim_buf_set_name(buf, make_buf_name(ref))
+
+            ft_module.callback(page.filetype, buf, ref)
 
             vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(page.data, "\n"))
             vim.api.nvim_set_option_value("filetype", page.filetype or "html", { buf = buf })

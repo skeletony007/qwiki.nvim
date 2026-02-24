@@ -81,7 +81,7 @@ local telescope_search_providers = function(query, providers)
 
                     actions.close(prompt_bufnr)
 
-                    util.open_wiki_page(vim.iter(vim.tbl_map(entry_to_page_ref, entries)):flatten():totable())
+                    util.open_wiki_page(vim.iter(entries):map(entry_to_page_ref):flatten():totable())
                 end)
                 return true
             end,
@@ -99,7 +99,7 @@ local telescope_search_providers = function(query, providers)
                 if not item_page_refs[item] then
                     item_page_refs[item] = {}
                 end
-                table.insert(item_page_refs[item], { result = result, provider = provider })
+                table.insert(item_page_refs[item], { title = result.ordinal, provider = provider })
             end
         end)
     end

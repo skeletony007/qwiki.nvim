@@ -22,7 +22,7 @@
 ---@field preview? qwiki.Preview
 
 ---@class qwiki.PageRef
----@field result qwiki.SearchResult
+---@field title string
 ---@field provider qwiki.Provider
 
 ---@class qwiki.Page
