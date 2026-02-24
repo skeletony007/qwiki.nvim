@@ -43,7 +43,7 @@ local make_buf_name = function(ref) return string.format("qwiki://%s/%s", ref.pr
 ---@param buf_name string
 ---@param ref qwiki.PageRef
 local load_page = function(buf, buf_name, ref)
-    vim.api.nvim_buf_set_name(buf, buf_name .. "scheduling request")
+    vim.api.nvim_buf_set_name(buf, buf_name .. " scheduling request")
     vim.api.nvim_buf_call(buf, function() vim.cmd("syntax match Comment /.*/") end)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
         string.format("Title: %s", ref.title),
@@ -51,7 +51,7 @@ local load_page = function(buf, buf_name, ref)
         "[INFO] scheduling request...",
     })
     vim.schedule(function()
-        vim.api.nvim_buf_set_name(buf, buf_name .. "executing request")
+        vim.api.nvim_buf_set_name(buf, buf_name .. " executing request")
         vim.api.nvim_buf_set_lines(buf, -2, -1, false, { "[INFO] executing request..." })
         local ok, page = pcall(ref.provider.get_page, ref.provider, ref.title)
         if not ok then
