@@ -10,9 +10,9 @@ Pronounced "quickie". Quickly search wiki pages.
 - [Providers](#providers)
   - [Wikimedia REST API (Wikipedia)](#wikimedia-rest-api-wikipedia)
   - [ArchWiki](#archwiki)
-- [Filetype callbacks](#filetype-callbacks)
-- [Filetype helpers](#filetype-helpers)
+- [Filetype](#filetype)
   - [Mediawiki](#mediawiki)
+    - [Example: follow mediawiki links](#example-follow-mediawiki-links)
 - [Telesope extension](#telesope-extension)
 - [HTTP requests using curl](#http-requests-using-curl)
 <!--toc:end-->
@@ -77,50 +77,45 @@ qwiki.wikimedia:new("My Wikipedia", {
 qwiki.archwiki:new("ArchWiki")
 ```
 
-### Filetype callbacks
+### Filetype
 
 ```lua
-local filetypes = require("qwiki.filetypes")
+local filetype = require("qwiki.filetype")
 ```
 
-Call `filetypes.setup` to define callbacks. Example:
-
-```lua
-local mediawiki_helpers = require("qwiki.filetypes.helpers.mediawiki")
-filetypes.setup({
-    mediawiki = function(buf, ref)
-        vim.keymap.set(
-            "n",
-            "<C-]>",
-            function() mediawiki_helpers.follow_wikilink(ref) end,
-            { buffer = buf, silent = true }
-        )
-        vim.keymap.set({ "n", "v" }, "j", "gj", { buffer = buf, silent = true })
-        vim.keymap.set({ "n", "v" }, "k", "gk", { buffer = buf, silent = true })
-        vim.keymap.set({ "n", "v" }, "gj", "j", { buffer = buf, silent = true })
-        vim.keymap.set({ "n", "v" }, "gk", "k", { buffer = buf, silent = true })
-    end,
-})
-```
-
-### Filetype helpers
+Filetype modules are defined at `filetype.<filetype>`. Filetype callbacks are
+defined on every filetype, but these can be overridden.
 
 #### Mediawiki
 
 **Module**
 
 ```lua
-local mediawiki_helpers = require("qwiki.filetypes.helpers.mediawiki")
+filetype.mediawiki
 ```
 
 **Implements**
 
 ```lua
-mediawiki_helpers.follow_wikilink(ref)
+filetype.mediawiki.follow_wikilink_under_cursor(ref)
 ```
 
 ```lua
-mediawiki_helpers.get_wikilink_under_cursor()
+filetype.mediawiki.get_wikilink_under_cursor()
+```
+
+##### Example: follow mediawiki links
+
+```lua
+filetype.mediawiki.callback = function(args)
+    local buf, ref = args.buf, args.ref
+    vim.keymap.set(
+        "n",
+        "<C-]>",
+        function() filetype.mediawiki.follow_wikilink_under_cursor(ref) end,
+        { buffer = buf, silent = true }
+    )
+end
 ```
 
 ### Telesope extension

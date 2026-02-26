@@ -34,7 +34,7 @@ M.get_wikilink_under_cursor = function()
 end
 
 ---@param ref qwiki.PageRef
-M.follow_wikilink = function(ref)
+M.follow_wikilink_under_cursor = function(ref)
     local title = M.get_wikilink_under_cursor()
     if not title then
         return

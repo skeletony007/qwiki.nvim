@@ -1,4 +1,4 @@
-local ft_module = require("qwiki.filetypes")
+local filetype = require("qwiki.filetype")
 
 local M = {}
 
@@ -80,7 +80,7 @@ local load_page = function(buf, buf_name, ref)
         vim.api.nvim_buf_call(buf, function() vim.cmd("syntax clear Comment") end)
         vim.api.nvim_buf_set_name(buf, buf_name)
 
-        ft_module.callback(page.filetype, buf, ref)
+        filetype[page.filetype].callback({ buf = buf, ref = ref })
 
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(page.data, "\n"))
         vim.api.nvim_set_option_value("filetype", page.filetype or "html", { buf = buf })
