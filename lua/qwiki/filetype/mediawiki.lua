@@ -37,7 +37,7 @@ end
 M.follow_wikilink_under_cursor = function(ref)
     local title = M.get_wikilink_under_cursor()
     if not title then
-        return
+        error("No wikilink under cursor")
     end
     push_tagstack()
     util.open_wiki_page({

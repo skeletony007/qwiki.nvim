@@ -118,6 +118,10 @@ filetype.mediawiki.callback = function(args)
 end
 ```
 
+> [!TIP]
+> You might want to fallback to `vim.cmd.tag({ vim.fn.expand("<cword>") })` or
+> `:normal! <C-]>` on error using `pcall`.
+
 ### Telesope extension
 
 This plugin includes a [telescope.nvim] extension `qwiki` with
