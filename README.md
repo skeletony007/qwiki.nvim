@@ -8,8 +8,9 @@ Pronounced "quickie". Quickly search wiki pages.
 - [qwiki.nvim](#qwikinvim)
 - [Instalation](#instalation)
 - [Providers](#providers)
-  - [Wikimedia REST API (Wikipedia)](#wikimedia-rest-api-wikipedia)
-  - [ArchWiki](#archwiki)
+  - [Wikimedia REST API](#wikimedia-rest-api)
+    - [Wikipedia](#wikipedia)
+    - [ArchWiki](#archwiki)
 - [Filetype](#filetype)
   - [Mediawiki](#mediawiki)
     - [Example: follow mediawiki links](#example-follow-mediawiki-links)
@@ -46,9 +47,12 @@ qwiki.wikikedia:new("My Wikipedia")
 
 There can be many instances of each provider, each having a unique name.
 
-#### Wikimedia REST API (Wikipedia)
+#### Wikimedia REST API
 
-[Documentation and examples]
+- [Wikimedia REST API]
+<!-- - [Wikimedia Action API] -->
+
+##### Wikipedia
 
 Simple set up:
 
@@ -68,14 +72,19 @@ qwiki.wikimedia:new("My Wikipedia", {
 })
 ```
 
-[API Portal Authentication]: https://api.wikimedia.org/wiki/Authentication#App_authentication
-[Documentation and examples]: https://www.mediawiki.org/wiki/API:Action_API
+##### ArchWiki
 
-#### ArchWiki
+Simple set up:
 
 ```lua
-qwiki.archwiki:new("ArchWiki")
+qwiki.wikimedia:new("ArchWiki", {
+    endpoint = "https://wiki.archlinux.org/rest.php",
+})
 ```
+
+[Wikimedia REST API]: https://www.mediawiki.org/wiki/Wikimedia_REST_API
+<!-- [Wikimedia Action API]: https://www.mediawiki.org/wiki/API:Action_API -->
+[API Portal Authentication]: https://api.wikimedia.org/wiki/Authentication#App_authentication
 
 ### Filetype
 
