@@ -160,10 +160,14 @@ This extension supports multi-selection.
 Loosely inspired by [Python Requests], module `qwiki.requests` is a wrapper for
 [curl]. This makes it simpler to maintain and add new providers.
 
+```lua
+local requests = require("qwiki.requests")
+```
+
 Runs asynchronously:
 
 ```lua
-local response = M.request(
+local response = requests.request(
     "https://api.wikimedia.org/core/v1/wikipedia/en/search/title",
     "GET",
     nil,
@@ -179,7 +183,7 @@ local response = M.request(
 Runs synchronously:
 
 ```lua
-local response = M.request(
+local response = requests.request(
     "https://api.wikimedia.org/core/v1/wikipedia/en/search/title",
     "GET",
     nil,
