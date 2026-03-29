@@ -1,5 +1,12 @@
 ### qwiki.nvim
 
+> [!WARNING]
+> skeletony007/qwiki.nvim is migrating to Codeberg!
+>
+> <https://codeberg.org/skeletony007/qwiki.nvim>
+>
+> Update your plugin config to receive future updates.
+
 Pronounced "quickie". Quickly search wiki pages.
 
 ![Demo with telescope.nvim made with Charm VHS](./demo.gif)

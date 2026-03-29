@@ -1,3 +1,15 @@
+vim.notify(
+    [[
+    skeletony007/qwiki.nvim is migrating to Codeberg!
+
+    <https://codeberg.org/skeletony007/qwiki.nvim>
+    
+    Update your plugin config to receive future updates.
+    ]],
+    vim.log.levels.WARN,
+    { title = "qwiki.nvim" }
+)
+
 local M = {}
 
 --- Deprecated provider names.
